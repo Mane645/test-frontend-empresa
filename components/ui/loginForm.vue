@@ -17,6 +17,7 @@
                 v-model="form.usuario"
                 outlined
                 dense
+                label="Usuario"
               />
             </v-row>
             <v-row>
@@ -25,6 +26,7 @@
                 type="password"
                 outlined
                 dense
+                label="Password"
               />
             </v-row>
             <v-row v-if="errorMessage" class="error">
