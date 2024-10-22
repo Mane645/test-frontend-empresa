@@ -19,7 +19,10 @@ export default {
     ]
   },
 
-  target: 'static',
+  target: 'static', // Esto asegura que Nuxt genere un sitio estático.
+  generate: {
+    dir: 'dist' // Aquí puedes especificar que la salida sea la carpeta 'dist'
+  },
   server: {
     port: process.env.PORT,
     host: '0.0.0.0'
