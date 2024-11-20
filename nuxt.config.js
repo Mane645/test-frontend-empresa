@@ -20,9 +20,6 @@ export default {
   },
 
   target: 'static', // Esto asegura que Nuxt genere un sitio estático.
-  generate: {
-    dir: 'dist' // Aquí puedes especificar que la salida sea la carpeta 'dist'
-  },
   server: {
     port: process.env.PORT,
     host: '0.0.0.0'
@@ -34,6 +31,7 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    '@/plugin/ui.js'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -73,19 +71,14 @@ export default {
           property: false
         },
         endpoints: {
-          login: {
-            url: '/auth/login',
-            method: 'post'
-          },
-          logout: {
-            url: '/auth/logout',
-            method: 'post'
-          }
+          login: { url: '/auth/login', method: 'post' },
+          logout: { url: '/auth/logout', method: 'post' },
+          user: { url: '/auth/user', method: 'get' }
         }
       }
     },
     redirect: {
-      login: '/login',
+      login: '/',
       logout: '/',
       home: '/dashboard'
     }

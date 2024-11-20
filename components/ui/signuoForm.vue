@@ -128,7 +128,7 @@
           @click="registrarUsuario"
         >
           <span style="text-transform: none; color: #F5EFFF;">
-            Registrar
+            {{ inside && update ? 'Actualizar' : inside && !update ? 'Crear nuevo' : 'Registrar' }}
           </span>
         </v-btn>
       </v-row>
@@ -138,15 +138,30 @@
 
 <script>
 export default {
+  props: {
+    inside: { type: Boolean, default: false },
+    update: { type: Boolean, default: false },
+    empleadoUpdate: { type: Object, default: null }
+  },
   data () {
     return {
       usuario: {},
       confirmPassword: ''
     }
   },
+  mounted () {
+    if (this.update && this.empleadoUpdate) {
+      this.usuario = this.empleadoUpdate
+      this.usuario.password = ''
+    }
+  },
   methods: {
     gotoLogin () {
-      this.$router.push('/')
+      if (this.inside) {
+        this.$emit('click-cancel')
+      } else {
+        this.$router.push('/')
+      }
     },
     async registrarUsuario () {
       if (this.usuario.password === this.confirmPassword) {
@@ -160,11 +175,36 @@ export default {
             formData.append(key, this.usuario[key])
           }
         }
-        const response = await this.$axios.post('/empleados/create', formData)
+        let response
+        if (this.update) {
+          response = await this.$axios.put(`/empleados/update/${this.usuario.id}`, formData)
+        } else {
+          response = await this.$axios.post('/empleados/create', formData)
+        }
         console.log('@@@ usuario => ', response)
         if (response.data.success) {
           this.usuario = {}
-          this.$router.push('/')
+          if (this.inside || this.update) {
+            if (this.update) {
+              this.$store.commit('setType', 'warning')
+              this.$store.commit('setColor', 'warning')
+              this.$store.commit('setMensaje', 'El usuario fue actualizado exitosamente')
+              this.$store.commit('setShowAlert', true)
+            } else {
+              this.$store.commit('setType', 'success')
+              this.$store.commit('setColor', 'green')
+              this.$store.commit('setMensaje', 'El usuario fue creado exitosamente')
+              this.$store.commit('setShowAlert', true)
+            }
+            this.$emit('guardado')
+          } else {
+            this.$router.push('/')
+          }
+        } else {
+          this.$store.commit('setType', 'error')
+          this.$store.commit('setColor', 'red')
+          this.$store.commit('setMensaje', 'Upss!! algo salio mal')
+          this.$store.commit('setShowAlert', true)
         }
       }
     }

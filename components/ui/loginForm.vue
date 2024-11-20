@@ -71,6 +71,9 @@ export default {
           data: this.form
         })
         console.log('@@@ res => ', res)
+        if (res && res.data && res.data.token) {
+          this.$router.push('/dashboard')
+        }
       } catch (error) {
         this.errorMessage = error
       }
